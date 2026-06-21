@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Field Notes — Grant Prince</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --ink:       #1A1917;
+      --ink-2:     #5C5A55;
+      --ink-3:     #A09D97;
+      --paper:     #F6F4EE;
+      --paper-2:   #EDEBE3;
+      --rule:      #D8D4C8;
+      --navy:      #1B2E4A;
+      --navy-lt:   #E4EAF3;
+      --purple:    #534AB7;
+      --purple-lt: #EEEDFE;
+      --teal:      #0F6E56;
+      --teal-lt:   #E1F5EE;
+      --blue:      #185FA5;
+      --blue-lt:   #E6F1FB;
+      --coral:     #993C1D;
+      --coral-lt:  #FAECE7;
+      --serif:     'Playfair Display', Georgia, serif;
+      --sans:      'Raleway', system-ui, sans-serif;
+      --mono:      'Courier New', monospace;
+    }
+
+    body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-weight: 300; line-height: 1.6; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 15px 40px;
+      background: rgba(246,244,238,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--rule);
+    }
+    .nav-name { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; color: var(--ink); text-decoration: none; }
+    .nav-links { display: flex; gap: 24px; list-style: none; align-items: center; }
+    .nav-links a { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--ink); }
+
+    /* Explore dropdown */
+    .dropdown { position: relative; }
+    .dropdown-toggle { cursor: pointer; }
+    .dropdown-toggle::after { content: ' ↓'; font-size: 8px; }
+    .dropdown-menu {
+      display: none;
+      position: absolute; top: calc(100% + 12px); left: 50%;
+      transform: translateX(-50%);
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      min-width: 160px;
+      z-index: 200;
+    }
+    .dropdown:hover .dropdown-menu { display: block; }
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 16px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+      text-decoration: none;
+      border-bottom: 1px solid var(--rule);
+      transition: background 0.15s;
+    }
+    .dropdown-menu a:last-child { border-bottom: none; }
+    .dropdown-menu a:hover { background: var(--paper-2); color: var(--ink); }
+
+    /* ── PAGE SYSTEM ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── HERO ── */
+    .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 88vh; border-bottom: 1px solid var(--rule); }
+    .hero-left { padding: 64px 40px 56px; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--rule); }
+    .hero-eyebrow { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); }
+    .hero-title { font-family: var(--serif); font-size: clamp(56px,7vw,88px); font-weight: 400; line-height: 1.0; color: var(--ink); margin: auto 0; }
+    .hero-title em { font-style: italic; color: var(--ink-2); }
+    .hero-bottom { display: flex; flex-direction: column; gap: 20px; }
+    .hero-tagline { font-size: 13px; color: var(--ink-2); line-height: 1.9; max-width: 360px; }
+    .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--rule); color: var(--ink-2); }
+    .hero-right { background: var(--paper-2); position: relative; overflow: hidden; display: flex; align-items: flex-end; padding: 28px; }
+    .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(var(--rule) 1px,transparent 1px),linear-gradient(90deg,var(--rule) 1px,transparent 1px); background-size: 40px 40px; opacity: 0.4; }
+    .hero-photo-label { position: relative; z-index: 1; font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+    .hero-coords { position: absolute; top: 28px; right: 28px; font-family: var(--mono); font-size: 9px; color: var(--ink-3); letter-spacing: 0.06em; }
+    .sketch-container { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 18px; padding: 60px; }
+    .sketch-line { height: 1px; background: var(--ink); opacity: 0; transform-origin: left; animation: drawIn 0.8s ease forwards; }
+    @keyframes drawIn { from { transform:scaleX(0); opacity:0; } to { transform:scaleX(1); opacity:0.18; } }
+    .sketch-line:nth-child(1){width:80%;animation-delay:0.2s}
+    .sketch-line:nth-child(2){width:55%;animation-delay:0.4s}
+    .sketch-line:nth-child(3){width:90%;animation-delay:0.6s}
+    .sketch-line:nth-child(4){width:40%;animation-delay:0.8s}
+    .sketch-line:nth-child(5){width:70%;animation-delay:1.0s}
+    .sketch-line:nth-child(6){width:35%;animation-delay:1.2s}
+    .sketch-line:nth-child(7){width:82%;animation-delay:1.4s}
+
+    /* ── SHARED SECTION STYLES ── */
+    .sec { border-bottom: 1px solid var(--rule); }
+    .sec-inner { padding: 48px 40px; }
+    .eyebrow { font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 24px; }
+    .page-title { font-family: var(--serif); font-size: clamp(32px,4vw,48px); font-weight: 400; line-height: 1.1; color: var(--ink); margin-bottom: 16px; }
+    .page-intro { font-size: 14px; color: var(--ink-2); line-height: 1.9; max-width: 600px; margin-bottom: 40px; }
+
+    /* ── PROJECTS ── */
+    .projects-grid { display: grid; grid-template-columns: repeat(3,1fr); }
+    .project-cell { border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); cursor: pointer; overflow: hidden; position: relative; }
+    .project-cell:nth-child(3n) { border-right: none; }
+    .project-cell:nth-child(n+4) { border-bottom: none; }
+    .project-thumb { width:100%; aspect-ratio:4/3; display:flex; align-items:center; justify-content:center; font-size:36px; transition:transform 0.4s ease; }
+    .project-cell:hover .project-thumb { transform: scale(1.04); }
+    .t-sand{background:#DDD8CC} .t-slate{background:#C8D2DC} .t-sage{background:#C8D4C4}
+    .t-rust{background:#D8C8C0} .t-steel{background:#CACED4} .t-sky{background:#C4D8E4}
+    .project-info { padding: 16px 18px; border-top: 1px solid var(--rule); }
+    .project-title { font-family: var(--serif); font-size: 15px; font-weight: 400; color: var(--ink); margin-bottom: 4px; }
+    .project-meta { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--ink-3); text-transform: uppercase; }
+    .project-overlay { position:absolute; inset:0; background:rgba(26,25,23,0.72); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.3s ease; }
+    .project-cell:hover .project-overlay { opacity:1; }
+    .overlay-title { font-family:var(--serif); font-style:italic; font-size:18px; color:var(--paper); text-align:center; padding:0 20px; }
+
+    /* ── JOURNAL ── */
+    .journal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .journal-card { border: 1px solid var(--rule); background: white; }
+    .journal-img { width:100%; aspect-ratio:16/9; background:var(--paper-2); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .journal-img img { width:100%; height:100%; object-fit:cover; }
+    .journal-img-placeholder { font-family:var(--mono); font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-3); }
+    .journal-body { padding: 18px 20px; }
+    .journal-dateline { font-family:var(--mono); font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-3); margin-bottom:8px; }
+    .journal-title { font-family:var(--serif); font-size:17px; font-weight:400; color:var(--ink); line-height:1.3; margin-bottom:8px; }
+    .journal-text { font-size:12px; color:var(--ink-2); line-height:1.8; margin-bottom:12px; }
+    .jtag { font-family:var(--mono); font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color:var(--navy); background:var(--navy-lt); padding:4px 10px; display:inline-block; }
+
+    /* ── NOTEBOOK ── */
+    .entry { display:grid; grid-template-columns:28px 1fr 100px; gap:20px; padding:20px 0; border-bottom:1px solid var(--rule); align-items:start; transition:background 0.15s; }
+    .entry:last-child { border-bottom:none; }
+    .entry:hover { background:var(--paper-2); margin:0 -40px; padding:20px 40px; }
+    .entry-n { font-family:var(--mono); font-size:10px; color:var(--ink-3); padding-top:3px; }
+    .entry-title { font-family:var(--serif); font-size:17px; font-weight:400; color:var(--ink); line-height:1.3; margin-bottom:6px; }
+    .entry-body { font-size:13px; color:var(--ink-2); line-height:1.75; }
+    .entry-cat { font-family:var(--mono); font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color:var(--navy); background:var(--navy-lt); padding:4px 10px; text-align:center; align-self:center; }
+
+    /* ── EXPLORE PAGES ── */
+    .explore-header { padding: 56px 40px 40px; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+    .explore-accent { width: 32px; height: 2px; margin-bottom: 16px; }
+    .explore-body { font-size: 14px; color: var(--ink-2); line-height: 1.9; }
+    .explore-body p + p { margin-top: 14px; }
+    .questions-block { padding: 40px; border-bottom: 1px solid var(--rule); }
+    .q-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+    .q-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--rule); align-items: start; }
+    .q-item:last-child { border-bottom: none; }
+    .q-num { font-family: var(--mono); font-size: 10px; color: var(--ink-3); padding-top: 3px; flex-shrink: 0; }
+    .q-text { font-family: var(--serif); font-size: 16px; font-weight: 400; color: var(--ink); line-height: 1.4; }
+    .reading-block { padding: 40px; border-bottom: 1px solid var(--rule); }
+    .reading-list { display: flex; flex-direction: column; gap: 0; }
+    .reading-item { display: grid; grid-template-columns: 1fr auto; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--rule); align-items: center; }
+    .reading-item:last-child { border-bottom: none; }
+    .reading-title { font-size: 14px; color: var(--ink); margin-bottom: 4px; }
+    .reading-note { font-size: 12px; color: var(--ink-2); line-height: 1.7; font-style: italic; }
+    .reading-source { font-family: var(--mono); font-size: 9px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+    .uploads-block { padding: 40px; }
+    .uploads-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .upload-placeholder { border: 1px dashed var(--rule); aspect-ratio: 4/3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: background 0.15s; }
+    .upload-placeholder:hover { background: var(--paper-2); }
+    .upload-icon { font-size: 24px; color: var(--ink-3); }
+    .upload-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); text-align: center; }
+
+    /* ── QUOTE ── */
+    .quote-wrap { padding: 72px 40px; background: var(--navy); }
+    .quote-mark { font-family:var(--serif); font-size:80px; color:rgba(255,255,255,0.12); line-height:0.7; margin-bottom:20px; }
+    .quote-text { font-family:var(--serif); font-style:italic; font-size:clamp(18px,2.5vw,26px); color:rgba(246,244,238,0.92); line-height:1.65; max-width:660px; margin-bottom:24px; }
+    .quote-attr { font-family:var(--mono); font-size:10px; letter-spacing:0.12em; color:rgba(246,244,238,0.4); text-transform:uppercase; }
+
+    /* ── ABOUT ── */
+    .about-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 60px; }
+    .about-text { font-size: 14px; color: var(--ink-2); line-height: 1.9; }
+    .about-text p + p { margin-top: 14px; }
+    .awards-eyebrow { font-family:var(--mono); font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3); margin-bottom:12px; margin-top:28px; }
+    .award-item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--rule); font-size:12px; color:var(--ink-2); }
+    .award-item:last-child { border-bottom:none; }
+    .award-dot { width:5px; height:5px; border-radius:50%; background:var(--navy); flex-shrink:0; }
+    .interest-list { list-style:none; }
+    .interest-list li { font-family:var(--mono); font-size:11px; letter-spacing:0.04em; color:var(--ink-2); padding:10px 0; border-bottom:1px solid var(--rule); display:flex; align-items:center; gap:10px; }
+    .interest-list li::before { content:'→'; color:var(--ink-3); font-size:10px; }
+
+    /* ── FOOTER ── */
+    footer { padding:18px 40px; display:flex; justify-content:space-between; align-items:center; border-top: 1px solid var(--rule); }
+    footer span { font-family:var(--mono); font-size:10px; letter-spacing:0.08em; color:var(--ink-3); }
+
+    /* ── MUSIC ── */
+    .music-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .music-card { border: 1px solid var(--rule); padding: 28px; }
+    .music-card-title { font-family:var(--serif); font-size:20px; font-weight:400; color:var(--ink); margin-bottom:12px; }
+    .music-card-body { font-size:13px; color:var(--ink-2); line-height:1.85; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; flex-wrap: wrap; gap: 10px; }
+      .nav-links { gap: 14px; flex-wrap: wrap; }
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-right { height: 200px; }
+      .hero-left { padding: 40px 20px; }
+      .hero-title { font-size: 52px; }
+      .projects-grid { grid-template-columns: 1fr 1fr; }
+      .project-cell:nth-child(3n) { border-right: 1px solid var(--rule); }
+      .project-cell:nth-child(2n) { border-right: none; }
+      .sec-inner { padding: 32px 20px; }
+      .journal-grid { grid-template-columns: 1fr; }
+      .entry { grid-template-columns: 24px 1fr; }
+      .entry-cat { display: none; }
+      .entry:hover { margin:0; padding:20px 0; background:none; }
+      .explore-header { grid-template-columns: 1fr; gap: 24px; padding: 32px 20px; }
+      .questions-block, .reading-block, .uploads-block { padding: 32px 20px; }
+      .uploads-grid { grid-template-columns: 1fr 1fr; }
+      .about-grid { grid-template-columns: 1fr; gap: 32px; }
+      .music-grid { grid-template-columns: 1fr; gap: 20px; }
+      .quote-wrap { padding: 48px 20px; }
+      footer { flex-direction:column; gap:6px; text-align:center; padding:16px 20px; }
+      .dropdown-menu { left: 0; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-name" href="#" onclick="showPage('home')">Grant Prince</a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('projects')">Projects</a></li>
+    <li><a href="#" onclick="showPage('journal')">Journal</a></li>
+    <li><a href="#" onclick="showPage('notebook')">Notebook</a></li>
+    <li class="dropdown">
+      <a class="dropdown-toggle" href="#">Explore</a>
+      <div class="dropdown-menu">
+        <a href="#" onclick="showPage('architecture')">Architecture</a>
+        <a href="#" onclick="showPage('aerospace')">Aerospace</a>
+        <a href="#" onclick="showPage('structural')">Structural</a>
+        <a href="#" onclick="showPage('nuclear')">Nuclear</a>
+      </div>
+    </li>
+    <li><a href="#" onclick="showPage('music')">Music</a></li>
+    <li><a href="#" onclick="showPage('about')">About</a></li>
+  </ul>
+</nav>
+
+<!-- ════════════════════════════════════════════════ HOME ══ -->
+<div id="page-home" class="page active">
+
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Portfolio · 2025</div>
+      <h1 class="hero-title">Field<br><em>Notes</em></h1>
+      <div class="hero-bottom">
+        <p class="hero-tagline">Observations on systems, design, music, structures, and the way people move through spaces.</p>
+        <div class="hero-tags">
+          <span class="tag">Urban Design</span>
+          <span class="tag">Architecture</span>
+          <span class="tag">Engineering</span>
+          <span class="tag">Music</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="grid-bg"></div>
+      <div class="sketch-container">
+        <div class="sketch-line"></div><div class="sketch-line"></div>
+        <div class="sketch-line"></div><div class="sketch-line"></div>
+        <div class="sketch-line"></div><div class="sketch-line"></div>
+        <div class="sketch-line"></div>
+      </div>
+      <div class="hero-coords">41.2835° N · 70.0995° W</div>
+      <span class="hero-photo-label">Sketchbook — Urban Systems</span>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="quote-wrap">
+      <div class="quote-mark">"</div>
+      <p class="quote-text">Small adjustments create huge changes. Calm people solve problems faster. The best designed systems often work quietly.</p>
+      <div class="quote-attr">— Grant Prince</div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ════════════════════════════════════════════════ PROJECTS ══ -->
+<div id="page-projects" class="page">
+  <div class="sec-inner">
+    <div class="eyebrow">Projects</div>
+    <p class="page-intro">A working collection of builds, refurbishments, sketches, and ideas. Some finished. Some in progress. All of them taught me something.</p>
+  </div>
+  <section class="sec">
+    <div class="projects-grid">
+      <div class="project-cell">
+        <div class="project-thumb t-sand">⛵</div>
+        <div class="project-overlay"><span class="overlay-title">Refurbishing a 420</span></div>
+        <div class="project-info"><div class="project-title">Refurbishing a 420</div><div class="project-meta">Structures · 2025</div></div>
+      </div>
+      <div class="project-cell">
+        <div class="project-thumb t-slate">🏙️</div>
+        <div class="project-overlay"><span class="overlay-title">Urban Observation Log</span></div>
+        <div class="project-info"><div class="project-title">Urban Observation Log</div><div class="project-meta">Urban Design · Ongoing</div></div>
+      </div>
+      <div class="project-cell">
+        <div class="project-thumb t-sage">📐</div>
+        <div class="project-overlay"><span class="overlay-title">Systems Sketches</span></div>
+        <div class="project-info"><div class="project-title">Systems Sketches</div><div class="project-meta">Architecture · Ongoing</div></div>
+      </div>
+      <div class="project-cell">
+        <div class="project-thumb t-rust">🥁</div>
+        <div class="project-overlay"><span class="overlay-title">Jazz Ensemble</span></div>
+        <div class="project-info"><div class="project-title">Jazz Ensemble</div><div class="project-meta">Music · 2025–26</div></div>
+      </div>
+      <div class="project-cell">
+        <div class="project-thumb t-steel">🛩️</div>
+        <div class="project-overlay"><span class="overlay-title">Aerospace Reading</span></div>
+        <div class="project-info"><div class="project-title">Aerospace Reading</div><div class="project-meta">Research · Ongoing</div></div>
+      </div>
+      <div class="project-cell">
+        <div class="project-thumb t-sky">🔬</div>
+        <div class="project-overlay"><span class="overlay-title">Nuclear — Early Notes</span></div>
+        <div class="project-info"><div class="project-title">Nuclear — Early Notes</div><div class="project-meta">Research · Ongoing</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════════════════════════════════════════ JOURNAL ══ -->
+<div id="page-journal" class="page">
+  <div class="sec-inner">
+    <div class="eyebrow">Field Journal · Summer 2025</div>
+    <p class="page-intro">Observations from the aquarium, the science center, the water, and whatever else catches my attention. One entry per shift. Short, honest, specific.</p>
+  </div>
+  <section class="sec">
+    <div class="sec-inner">
+      <div class="journal-grid">
+
+        <div class="journal-card">
+          <div class="journal-img"><span class="journal-img-placeholder">Add photo here</span></div>
+          <div class="journal-body">
+            <div class="journal-dateline">Maria Mitchell Aquarium · Nantucket, MA</div>
+            <div class="journal-title">How 200 people move through a very small building</div>
+            <div class="journal-text">The aquarium is tiny. No room for mistakes in the layout. Watching how people navigate it — where they stop, where they speed up, where they bunch up — is a real-time lesson in spatial design. The good exhibits pull you in without announcing themselves.</div>
+            <span class="jtag">Urban Design</span>
+          </div>
+        </div>
+
+        <div class="journal-card">
+          <div class="journal-img"><span class="journal-img-placeholder">Add photo here</span></div>
+          <div class="journal-body">
+            <div class="journal-dateline">Nantucket Science Center · Nantucket, MA</div>
+            <div class="journal-title">What exhibits teach about systems communication</div>
+            <div class="journal-text">The best science exhibits don't explain — they show. A tank that makes tidal flow visible does more than any label could. The building itself should communicate what's happening inside it.</div>
+            <span class="jtag">Systems</span>
+          </div>
+        </div>
+
+        <div class="journal-card">
+          <div class="journal-img"><span class="journal-img-placeholder">Add photo here</span></div>
+          <div class="journal-body">
+            <div class="journal-dateline">Morning Sail · Nantucket Sound</div>
+            <div class="journal-title">Wind, sail trim, and parametric thinking</div>
+            <div class="journal-text">Adjusting the jib changes the main. Adjusting the main changes the heel. It's the same logic as parametric design — pull one variable and the whole system responds. You can't tune a sail without understanding the whole boat.</div>
+            <span class="jtag">Structures</span>
+          </div>
+        </div>
+
+        <div class="journal-card">
+          <div class="journal-img"><span class="journal-img-placeholder">Add photo here</span></div>
+          <div class="journal-body">
+            <div class="journal-dateline">Nantucket, MA · Summer 2025</div>
+            <div class="journal-title">Islands as closed systems</div>
+            <div class="journal-text">Everything on Nantucket has to come in by boat or plane. Water, waste, power, food — you can see the systems. It makes you think differently about how cities work when you can't see the edges.</div>
+            <span class="jtag">Urban Design</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════════════════════════════════════════ NOTEBOOK ══ -->
+<div id="page-notebook" class="page">
+  <div class="sec-inner">
+    <div class="eyebrow">Notebook</div>
+    <p class="page-intro">Short entries on things I've noticed, figured out, or am still thinking about. The less finished part of the site — and probably the most honest.</p>
+    <div class="entry" style="padding-top:0;">
+      <span class="entry-n">01</span>
+      <div><div class="entry-title">What refurbishing a 420 teaches you about systems</div><div class="entry-body">Every part you touch teaches you what it does. The rigging, the hull, the hardware — nothing is decorative. Fixing one thing means understanding how it connects to everything else.</div></div>
+      <span class="entry-cat">Structures</span>
+    </div>
+    <div class="entry">
+      <span class="entry-n">02</span>
+      <div><div class="entry-title">Why some public spaces work and others don't</div><div class="entry-body">The ones that feel alive were probably designed that way. Quietly, on purpose. Wide enough sidewalks, seating that faces something interesting, shade where people want to stand.</div></div>
+      <span class="entry-cat">Urban Design</span>
+    </div>
+    <div class="entry">
+      <span class="entry-n">03</span>
+      <div><div class="entry-title">Rhythm, timing, and what jazz has to do with engineering</div><div class="entry-body">Structure lets improvisation exist. Without the chord changes, the shared vocabulary — there's no freedom, just noise. Constraints aren't the opposite of creativity. They're what creativity pushes against.</div></div>
+      <span class="entry-cat">Music</span>
+    </div>
+    <div class="entry">
+      <span class="entry-n">04</span>
+      <div><div class="entry-title">Calm people solve problems faster</div><div class="entry-body">Observed this on the water, in the shop, and in class. When something goes wrong on a boat, panic costs you time you don't have. The sailors I've learned the most from slow their thinking down — they don't stop moving.</div></div>
+      <span class="entry-cat">Observation</span>
+    </div>
+    <div class="entry">
+      <span class="entry-n">05</span>
+      <div><div class="entry-title">A marina is basically a living system</div><div class="entry-body">Tides set the schedule. Weather sets the agenda. The people who work there move like they've internalized all of it — they don't fight the system, they read it.</div></div>
+      <span class="entry-cat">Systems</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ ARCHITECTURE ══ -->
+<div id="page-architecture" class="page">
+  <div class="explore-header">
+    <div>
+      <div class="eyebrow">Explore · Architecture</div>
+      <div class="explore-accent" style="background:var(--purple);"></div>
+      <h2 class="page-title">Architecture</h2>
+      <div class="explore-body">
+        <p>I'm drawn to the way buildings quietly direct human behavior — the design decisions nobody notices but everybody feels. A hallway that's a foot too narrow. A plaza that faces the wrong way. A window that arrives exactly where you need light.</p>
+        <p>I'm especially interested in urban architecture — buildings that belong to a city rather than sitting apart from it. How a building meets the street. How it handles the corner. How it makes the space around it better or worse.</p>
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow">Favorite buildings</div>
+      <div style="font-size:13px; color:var(--ink-2); line-height:2;">
+        Grand Central Terminal, New York — moves 750,000 people without visible crowd control<br>
+        Oculus, Copenhagen — calm even when crowded<br>
+        Williamsburg Bridge, Brooklyn — honest, unpolished, every load path visible<br>
+        Chain Bridge, Budapest — elegant, old, still holding<br>
+        Hallgrímskirkja, Reykjavík — form following force all the way up
+      </div>
+    </div>
+  </div>
+  <div class="questions-block sec">
+    <div class="eyebrow">Questions I'm sitting with</div>
+    <ul class="q-list">
+      <li class="q-item"><span class="q-num">01</span><span class="q-text">Why do some buildings make the street better just by being there — and others make it worse?</span></li>
+      <li class="q-item"><span class="q-num">02</span><span class="q-text">How do you design a public space that feels alive without being designed to feel alive?</span></li>
+      <li class="q-item"><span class="q-num">03</span><span class="q-text">What makes a building feel like it belongs to a city versus just sitting in it?</span></li>
+      <li class="q-item"><span class="q-num">04</span><span class="q-text">How much of what makes a space work is the architect — and how much is the people who use it over time?</span></li>
+    </ul>
+  </div>
+  <div class="uploads-block">
+    <div class="eyebrow">Sketches, photos &amp; models</div>
+    <div class="uploads-grid">
+      <div class="upload-placeholder"><span class="upload-icon">📸</span><span class="upload-label">Add photo</span></div>
+      <div class="upload-placeholder"><span class="upload-icon">📐</span><span class="upload-label">Add sketch</span></div>
+      <div class="upload-placeholder"><span class="upload-icon">📁</span><span class="upload-label">Add CAD model</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ AEROSPACE ══ -->
+<div id="page-aerospace" class="page">
+  <div class="explore-header">
+    <div>
+      <div class="eyebrow">Explore · Aerospace</div>
+      <div class="explore-accent" style="background:var(--blue);"></div>
+      <h2 class="page-title">Aerospace</h2>
+      <div class="explore-body">
+        <p>Early curiosity. What got me here was realizing how much aerospace and architecture share — both are fundamentally about enclosing space efficiently under load. An aircraft fuselage and a curtain wall system are solving the same problem at different scales and speeds.</p>
+        <p>I'm at the reading and watching stage. These are notes, questions, and things I've found interesting so far.</p>
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow">What connects this to everything else</div>
+      <div style="font-size:13px; color:var(--ink-2); line-height:2;">
+        Tensegrity — compression and tension in balance, from Buckminster Fuller to SpaceX fairings<br>
+        Monocoque design — the skin carries the load. True in planes, true in thin-shell buildings<br>
+        Material science — what aerospace discovers, architecture eventually uses<br>
+        Efficiency under constraint — both fields do more with less
+      </div>
+    </div>
+  </div>
+  <div class="questions-block sec">
+    <div class="eyebrow">Questions I'm sitting with</div>
+    <ul class="q-list">
+      <li class="q-item"><span class="q-num">01</span><span class="q-text">Why did it take so long for aerospace material advances to reach building construction?</span></li>
+      <li class="q-item"><span class="q-num">02</span><span class="q-text">What would a building designed with the same weight discipline as an aircraft actually look like?</span></li>
+      <li class="q-item"><span class="q-num">03</span><span class="q-text">How do aerospace engineers think about structural failure differently than civil engineers?</span></li>
+      <li class="q-item"><span class="q-num">04</span><span class="q-text">Is tensegrity actually practical at building scale — or is it always going to be sculptural?</span></li>
+    </ul>
+  </div>
+  <div class="reading-block sec">
+    <div class="eyebrow">Reading &amp; watching</div>
+    <div class="reading-list">
+      <div class="reading-item">
+        <div><div class="reading-title">How Aircraft Structures Work — Lesics</div><div class="reading-note">Good starting point. The monocoque explanation clicked for me — once you see it you can't unsee it in buildings too.</div></div>
+        <span class="reading-source">YouTube</span>
+      </div>
+      <div class="reading-item">
+        <div><div class="reading-title">The Structural Basis of Architecture — Bjørn Sandaker</div><div class="reading-note">Bridges structural engineering and architecture. Chapter on tension structures is where aerospace and buildings actually meet.</div></div>
+        <span class="reading-source">Book</span>
+      </div>
+    </div>
+  </div>
+  <div class="uploads-block">
+    <div class="eyebrow">Notes &amp; clippings</div>
+    <div class="uploads-grid">
+      <div class="upload-placeholder"><span class="upload-icon">📄</span><span class="upload-label">Add article</span></div>
+      <div class="upload-placeholder"><span class="upload-icon">📝</span><span class="upload-label">Add notes</span></div>
+      <div class="upload-placeholder"><span class="upload-icon">📸</span><span class="upload-label">Add diagram</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ STRUCTURAL ══ -->
+<div id="page-structural" class="page">
+  <div class="explore-header">
+    <div>
+      <div class="eyebrow">Explore · Structural Engineering</div>
+      <div class="explore-accent" style="background:var(--teal);"></div>
+      <h2 class="page-title">Structural</h2>
+      <div class="explore-body">
+        <p>Structural engineering is where I have the most hands-on experience. Refurbishing a 420 sailboat with my dad was an unplanned course in how structures actually work — not in theory, but with tools, under constraint, with consequences if you get it wrong.</p>
+        <p>I'm interested in how things hold together. Bridges, hulls, frames, shells. The honest structures where every load path is visible and nothing is decorative.</p>
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow">Structures I keep coming back to</div>
+      <div style="font-size:13px; color:var(--ink-2); line-height:2;">
+        Williamsburg Bridge — industrial, unpolished, every decision visible<br>
+        Chain Bridge, Budapest — compression arch, 170 years old, still holding<br>
+        420 sailboat rig — tension and compression in constant negotiation with wind<br>
+        Fallingwater — cantilever as statement. Structurally risky. Worth it.<br>
+        The Pantheon — unreinforced concrete dome, 2,000 years old
+      </div>
+    </div>
+  </div>
+  <div class="questions-block sec">
+    <div class="eyebrow">Questions I'm sitting with</div>
+    <ul class="q-list">
+      <li class="q-item"><span class="q-num">01</span><span class="q-text">Why do some structures feel honest and others feel like they're hiding something?</span></li>
+      <li class="q-item"><span class="q-num">02</span><span class="q-text">How do you design for failure — not to prevent it, but to control where and how it happens?</span></li>
+      <li class="q-item"><span class="q-num">03</span><span class="q-text">What's the most structurally efficient form, and why don't we always build that way?</span></li>
+      <li class="q-item"><span class="q-num">04</span><span class="q-text">How did pre-modern builders figure out load paths without the math we have now?</span></li>
+    </ul>
+  </div>
+  <div class="uploads-block">
+    <div class="eyebrow">Photos, builds &amp; sketches</div>
+    <div class="uploads-grid">
+      <div class="upload-placeholder"><span class="upload-icon">📸</span><span class="upload-label">420 refurb photos</span></div>
+      <div class="upload-placeholder"><span class="upload-icon">🌉</span><span class="upload-label">Bridge photos</span></div>
+      <div class="upload-placeholder"><span class="upload-icon">📐</span><span class="upload-label">Load path sketches</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ NUCLEAR ══ -->
+<div id="page-nuclear" class="page">
+  <div class="explore-header">
+    <div>
+      <div class="eyebrow">Explore · Nuclear Engineering</div>
+      <div class="explore-accent" style="background:var(--coral);"></div>
+      <h2 class="page-title">Nuclear</h2>
+      <div class="explore-body">
+        <p>This one started with a single question: how do you design something that has to hold for 10,000 years? No other engineering discipline asks that. The answer turns out to involve geology, material science, structural engineering, and a kind of humility about what future humans will and won't understand.</p>
+        <p>I'm at the very beginning here. Reading notes and questions, mostly. But it's the kind of problem I can't stop thinking about.</p>
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow">The question that hooked me</div>
+      <div style="font-family:var(--serif); font-style:italic; font-size:18px; color:var(--ink); line-height:1.6; margin-bottom:16px;">"How do you warn people 10,000 years from now not to dig here?"</div>
+      <div style="font-size:12px; color:var(--ink-2); line-height:1.8;">The Waste Isolation Pilot Plant in New Mexico commissioned a team of linguists, architects, scientists, and anthropologists to design a warning system for nuclear waste that would survive the collapse of any language or civilization we currently know. That's a design problem.</div>
+    </div>
+  </div>
+  <div class="questions-block sec">
+    <div class="eyebrow">Questions I'm sitting with</div>
+    <ul class="q-list">
+      <li class="q-item"><span class="q-num">01</span><span class="q-text">How do containment structures account for material degradation over geological timescales?</span></li>
+      <li class="q-item"><span class="q-num">02</span><span class="q-text">What does structural engineering look like when the failure mode is catastrophic and irreversible?</span></li>
+      <li class="q-item"><span class="q-num">03</span><span class="q-text">Why did some nuclear plant designs fail structurally and others didn't — what was the difference?</span></li>
+      <li class="q-item"><span class="q-num">04</span><span class="q-text">Is small modular reactor design a structural engineering problem as much as a nuclear one?</span></li>
+    </ul>
+  </div>
+  <div class="reading-block sec">
+    <div class="eyebrow">Reading &amp; watching</div>
+    <div class="reading-list">
+      <div class="reading-item">
+        <div><div class="reading-title">The Long Now Foundation — Nuclear Waste Semiotics</div><div class="reading-note">How do you communicate danger across 10,000 years? The design proposals are remarkable — and deeply architectural.</div></div>
+        <span class="reading-source">Article</span>
+      </div>
+      <div class="reading-item">
+        <div><div class="reading-title">Midnight in Chernobyl — Adam Higginbotham</div><div class="reading-note">Not an engineering book but the structural and systems failures are documented in detail. What goes wrong when redundancy is ignored.</div></div>
+        <span class="reading-source">Book</span>
+      </div>
+    </div>
+  </div>
+  <div class="uploads-block">
+    <div class="eyebrow">Notes &amp; clippings</div>
+    <div class="uploads-grid">
+      <div class="upload-placeholder"><span class="upload-icon">📄</span><span class="upload-label">Add article</span></div>
+      <div class="upload-placeholder"><span class="upload-icon">📝</span><span class="upload-label">Add reading notes</span></div>
+      <div class="upload-placeholder"><span class="upload-icon">❓</span><span class="upload-label">Add questions</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ MUSIC ══ -->
+<div id="page-music" class="page">
+  <div class="sec-inner">
+    <div class="eyebrow">Music</div>
+    <p class="page-intro">Drums, guitar, jazz ensemble, and 90s rock. Music is the other way I think about systems — rhythm, timing, structure, and the space between notes.</p>
+    <div class="music-grid">
+      <div class="music-card">
+        <div class="music-card-title">Jazz Ensemble</div>
+        <div class="music-card-body">Joining jazz ensemble this fall as a freshman, playing drums. Jazz is the music I find hardest and most interesting — the structure is complex enough that you have to really understand it before you can play around it. Structure is what makes freedom possible.</div>
+      </div>
+      <div class="music-card">
+        <div class="music-card-title">90s Rock</div>
+        <div class="music-card-body">Nirvana, Soundgarden, Pearl Jam, Alice in Chains. The drumming in that era — Grohl, Matt Cameron, Chad Smith — is what made me want to play drums. Big sounds, no wasted hits. Music that sounds like something was at stake when they recorded it.</div>
+      </div>
+      <div class="music-card">
+        <div class="music-card-title">Guitar</div>
+        <div class="music-card-body">Playing guitar alongside drums gives me a different relationship to the music — understanding the harmonic structure that the rhythm sits under. The two instruments teach each other things.</div>
+      </div>
+      <div class="music-card">
+        <div class="music-card-title">Music + Everything Else</div>
+        <div class="music-card-body">Timing matters more than speed. Silence is part of the composition. The drummer's job is to make everyone else sound better. I keep finding the same ideas in music, engineering, and sailing. I think that means something.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ ABOUT ══ -->
+<div id="page-about" class="page">
+  <div class="sec-inner">
+    <div class="about-grid">
+      <div>
+        <div class="eyebrow">About</div>
+        <div class="about-text">
+          <p>I'm Grant Prince — a freshman from Red Bank, New Jersey, interested in urban design, architecture, engineering, systems thinking, and music.</p>
+          <p>I refurbished a 420 sailboat with my dad, which taught me more about how things connect than almost anything else I've done. I skipper 420s and spend most summer mornings on the water. I'm especially drawn to how cities and public spaces quietly shape the way people move and interact — the design choices nobody notices but everybody feels.</p>
+          <p>This summer I'm volunteering at the Maria Mitchell Aquarium and the Nantucket Science Center, and starting to learn CAD.</p>
+          <p>In school I take honors physics, AP Human Geography, honors algebra II, honors English, honors Spanish, and honors American History. Joining jazz ensemble this fall. I also play tennis.</p>
+          <p>I've been curious about a lot of things for a long time. This site is where I document what I'm building, noticing, reading, and figuring out.</p>
+        </div>
+        <div class="awards-eyebrow">Awards</div>
+        <div class="award-item"><span class="award-dot"></span>World Language Award in Spanish — Fair Haven Public Schools, 2025</div>
+        <div class="award-item"><span class="award-dot"></span>Achievement in Social Studies Award — Fair Haven Public Schools, 2025</div>
+      </div>
+      <div>
+        <div class="eyebrow">Interests</div>
+        <ul class="interest-list">
+          <li>Urban design &amp; public spaces</li>
+          <li>Architecture &amp; spatial design</li>
+          <li>Structural engineering</li>
+          <li>Aerospace engineering</li>
+          <li>Nuclear systems</li>
+          <li>Music — drums, guitar, jazz</li>
+          <li>CAD &amp; 3D modeling</li>
+          <li>Sailing — skippering 420s</li>
+          <li>Tennis</li>
+          <li>Transportation &amp; infrastructure</li>
+          <li>How cities shape human behavior</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <span>Field Notes — Grant Prince</span>
+  <span>Red Bank, NJ · 2025</span>
+</footer>
+
+<script>
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    var el = document.getElementById('page-' + id);
+    if (el) { el.classList.add('active'); window.scrollTo(0,0); }
+    return false;
+  }
+  document.querySelectorAll('a[onclick]').forEach(function(a) {
+    a.addEventListener('click', function(e) { e.preventDefault(); });
+  });
+</script>
+</body>
+</html>
