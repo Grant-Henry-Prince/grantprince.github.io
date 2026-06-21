@@ -1,0 +1,41 @@
+backend:
+  name: github
+  repo: grantprince/grantprince.github.io
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "journal"
+    label: "Journal"
+    folder: "_journal"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Date", name: "date", widget: "datetime"}
+      - {label: "Location", name: "location", widget: "string"}
+      - {label: "Photo", name: "photo", widget: "image", required: false}
+      - {label: "Body", name: "body", widget: "markdown"}
+      - {label: "Tag", name: "tag", widget: "select", options: ["Urban Design", "Systems", "Structures", "Music", "Observation", "Aerospace", "Nuclear"]}
+
+  - name: "notebook"
+    label: "Notebook"
+    folder: "_notebook"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Body", name: "body", widget: "markdown"}
+      - {label: "Tag", name: "tag", widget: "select", options: ["Structures", "Urban Design", "Music", "Observation", "Systems"]}
+
+  - name: "pages"
+    label: "Pages"
+    files:
+      - label: "About"
+        name: "about"
+        file: "_data/about.yml"
+        fields:
+          - {label: "Bio", name: "bio", widget: "markdown"}
+          - {label: "Currently", name: "currently", widget: "markdown"}
