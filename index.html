@@ -176,6 +176,22 @@
     .upload-icon { font-size: 24px; color: var(--ink-3); }
     .upload-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); text-align: center; }
 
+    /* ── FIELD STUDY (long-form write-ups inside Explore pages) ── */
+    .field-study { padding: 40px; border-bottom: 1px solid var(--rule); }
+    .field-study-title { font-family: var(--serif); font-size: 26px; font-weight: 400; color: var(--ink); margin-bottom: 6px; }
+    .field-study-dek { font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--ink-2); margin-bottom: 28px; }
+    .field-study p { font-size: 14px; color: var(--ink-2); line-height: 1.9; margin-bottom: 18px; max-width: 680px; }
+    .field-subhead { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--navy); margin: 30px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
+    .field-photos { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; margin: 24px 0 28px; }
+    .field-photos.cols-3 { grid-template-columns: repeat(3,1fr); }
+    .field-photo { border: 1px solid var(--rule); background: var(--paper-2); }
+    .field-photo img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+    .field-photo figcaption { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; color: var(--ink-3); padding: 8px 10px; text-align: center; }
+    .field-note { font-family: var(--mono); font-size: 11px; line-height: 1.8; color: var(--ink-2); background: var(--paper-2); border-left: 2px solid var(--navy); padding: 12px 16px; margin: 20px 0 26px; max-width: 680px; }
+    @media (max-width: 768px) {
+      .field-photos, .field-photos.cols-3 { grid-template-columns: 1fr 1fr; }
+    }
+
     /* ── QUOTE ── */
     .quote-wrap { padding: 72px 40px; background: var(--navy); }
     .quote-mark { font-family:var(--serif); font-size:80px; color:rgba(255,255,255,0.12); line-height:0.7; margin-bottom:20px; }
@@ -221,7 +237,7 @@
       .entry-cat { display: none; }
       .entry:hover { margin:0; padding:20px 0; background:none; }
       .explore-header { grid-template-columns: 1fr; gap: 24px; padding: 32px 20px; }
-      .questions-block, .reading-block, .uploads-block { padding: 32px 20px; }
+      .questions-block, .reading-block, .uploads-block, .field-study { padding: 32px 20px; }
       .uploads-grid { grid-template-columns: 1fr 1fr; }
       .about-grid { grid-template-columns: 1fr; gap: 32px; }
       .music-grid { grid-template-columns: 1fr; gap: 20px; }
@@ -447,6 +463,56 @@
       </div>
     </div>
   </div>
+
+  <div class="field-study sec">
+    <div class="eyebrow">Field Study — Nantucket, MA</div>
+    <div class="field-study-title">Two Towers, Two Problems</div>
+    <div class="field-study-dek">Brant Point was built to break. Sankaty Head was built to last. Neither one is wrong.</div>
+
+    <p>Lighthouses have been around for thousands of years, and even though we don't really need them for navigation anymore, they're still proof of how much engineering and architecture have shaped the way people move through the world. A lighthouse sounds like a simple idea. Put a light somewhere high so people can see it. But the way engineers have actually solved that problem keeps changing. Fire, then oil, then electric by the 1900s. Every version comes down to what materials and technology people had at the time.</p>
+
+    <p>The lighthouses on Nantucket were all built in the more modern era of lighthouse design, the 1700s and 1800s, but even on the same small island, they were built completely differently, because the people building them cared about different things.</p>
+
+    <div class="field-photos cols-3">
+      <figure class="field-photo">
+        <img src="images/eddystone-cutaway.jpg" alt="Cutaway engineering diagram of the New Eddystone Lighthouse showing interior floors and stonework courses">
+        <figcaption>FIG. 1 — cutaway section, Eddystone Lighthouse</figcaption>
+      </figure>
+      <figure class="field-photo">
+        <img src="images/spanish-tower-cutaway.jpg" alt="Historic architectural plan and section drawing of a colonial-era masonry tower">
+        <figcaption>FIG. 2 — plan &amp; section, masonry tower</figcaption>
+      </figure>
+      <figure class="field-photo">
+        <img src="images/fresnel-lens-whaling-museum.jpg" alt="The Sankaty Head Fresnel lens on display at the Nantucket Whaling Museum">
+        <figcaption>FIG. 3 — the Sankaty Head Fresnel lens, Whaling Museum</figcaption>
+      </figure>
+    </div>
+
+    <p>These first two aren't Nantucket lighthouses — they're reference for how engineers have historically drawn and planned a tower like this: floor by floor, course by course. Every ring of stone in a drawing like this is a structural decision, not just a shape.</p>
+
+    <div class="field-subhead">Brant Point</div>
+    <p>Brant Point is a good example of engineering for the actual conditions instead of engineering to last forever. It was the first lighthouse on Nantucket and the second in America, and it was built to be cheap and easy to replace, not permanent. The first version was wood, built in 1746, and it only cost the community 200 pounds, about $80,000 today. That wasn't cutting corners. Nantucket's sand keeps shifting and the weather is rough, so a permanent tower would eventually stop lining up with the harbor entrance, since the entrance itself moves. Instead of fighting that, they designed around it. Brant Point has been rebuilt ten times, and the current version is from 1901, built simple enough to move again if the harbor lines shift.</p>
+    <p>Add up all ten rebuilds and Brant Point alone has cost the island about $1.04 million. Brant Point wasn't a lighthouse with a flaw. It was architecturally made knowing that it would break. That's a totally different engineering problem than building something to survive forever.</p>
+
+    <div class="field-subhead">Sankaty Head</div>
+    <p>Sankaty Head Light is the opposite problem. The problem isn't just how to keep it standing, but also how to deal with the constant erosion that the beach faces. Over the hundred year period between 1900 and 2000, the beach moved about 195 feet, and then lost about 3 feet every year after that. It got moved in 2007 once the lighthouse was 70 feet from the edge, and they moved it 405 feet inland, where it should sit for at least another 100 years.</p>
+    <p>While Brant Point was built to be destroyed or easily moved, Sankaty was built to last forever. The reason why they were built differently isn't because one way was believed to be better. It's because Brant Point needed to be precise for the harbor lines, while Sankaty was used to warn or guide sailors.</p>
+    <p>Sankaty Head is also where the Fresnel lens I saw at the Whaling Museum came from. It was installed in 1850, and it was the first lens of its kind in the country to come as original equipment on a lighthouse. Before lenses like that, lighthouses just burned oil out in the open and lost most of the light. A Fresnel lens uses rings of glass prisms to bend the light into one beam instead of letting it scatter in every direction, so one whale oil lamp could be seen more than 20 miles out to sea. That's not really a building problem, it's an optics problem. Someone had to figure out how to bend light on purpose, not just produce it.</p>
+    <p>The Fresnel lens wasn't just a more efficient way to shine the light. It was revolutionary for guiding sailors, and it helped keep Nantucket a whaling powerhouse for years.</p>
+
+    <div class="field-subhead">Sketches</div>
+    <div class="field-photos">
+      <figure class="field-photo">
+        <img src="images/sketch-sankaty-head.jpg" alt="Colored pencil sketch of Sankaty Head Light, showing its white tower with a wide red band">
+        <figcaption>FIG. 4 — Sankaty Head, colored pencil</figcaption>
+      </figure>
+      <figure class="field-photo">
+        <img src="images/sketch-brant-point.jpg" alt="Pencil sketch of Brant Point Light with its footbridge to shore">
+        <figcaption>FIG. 5 — Brant Point, graphite</figcaption>
+      </figure>
+    </div>
+  </div>
+
   <div class="questions-block sec">
     <div class="eyebrow">Questions I'm sitting with</div>
     <ul class="q-list">
@@ -488,6 +554,38 @@
       </div>
     </div>
   </div>
+
+  <div class="field-study sec">
+    <div class="eyebrow">Field Study — Autodesk Fusion 360</div>
+    <div class="field-study-title">Screwdriver. Bottle. Plane.</div>
+    <div class="field-study-dek">First time in real CAD software, taught by tutorials instead of a class.</div>
+
+    <p>This was my first time using real CAD software. I didn't take a class for it, I just watched tutorial videos and figured it out as I went. My first two projects were a screwdriver and a bottle. Basic stuff like sketching a profile, extruding it into a solid, adding a fillet so the edges aren't sharp. Small parts, but it's where I learned the tools I ended up using on everything else. After that I found a guide for modeling a plane and decided to build the whole thing, an Air Tractor design, from scratch using the same workflow it walked through.</p>
+
+    <p>Before starting to model, I imported images of a plane design to help get a reference point. These were used many times throughout the build, including sketching the fit point splines, the windows, and having a guide for where the wings and fins go. From there I built sketch profiles at different points along the fuselage, the front, the cockpit area, the tail, using circles and curves that matched the canvas underneath. I used the loft tool to create a solid block for the body, or the fuselage, of the plane, and used the fit point splines as the guide rails to get the shape I wanted.</p>
+
+    <div class="field-photos cols-3">
+      <figure class="field-photo">
+        <img src="images/plane-side-view.png" alt="Fusion 360 side profile view of Grant's plane model">
+        <figcaption>FIG. 1 — side profile, front view plane</figcaption>
+      </figure>
+      <figure class="field-photo">
+        <img src="images/plane-top-view.png" alt="Fusion 360 top-down view of Grant's plane model">
+        <figcaption>FIG. 2 — top view, wing &amp; tail layout</figcaption>
+      </figure>
+      <figure class="field-photo">
+        <img src="images/plane-3-4-view.png" alt="Fusion 360 three-quarter angle view of the finished plane model">
+        <figcaption>FIG. 3 — finished model, 3/4 front view</figcaption>
+      </figure>
+    </div>
+
+    <div class="field-note"><b>Feature tree, left to right:</b> Canvases (plane side / plane top reference images) → Sketches (top and bottom, sides, circle front, circle back, cockpit circle) → Bodies (plane, wing start, wing, landing gear back, spinner)</div>
+
+    <p>The wings were simpler, mostly extrude, taking a 2D wing profile sketch and pushing it straight out to the right length and angle. I tapered the extrude, and added other bodies underneath the wing to make the transition from wing to body smoother. The spinner up front started as an extrude from the front, followed by a sketch that followed a circular pattern to cut through and create the cone shape. The actual propeller blades were just a use of the rectangular pattern tool. The landing wheel was a revolve command, and two extrudes of rectangles made the bar.</p>
+
+    <p>Because the plane was grey solid metal by default, I used the appearance command to assign colors to each item. Compared to the screwdriver and the bottle, this was the first time I used more than one or two tools to get somewhere. It's the first project where I actually had to plan the order I built things in, not just make one shape and stop.</p>
+  </div>
+
   <div class="questions-block sec">
     <div class="eyebrow">Questions I'm sitting with</div>
     <ul class="q-list">
