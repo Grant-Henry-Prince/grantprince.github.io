@@ -780,6 +780,13 @@
 </footer>
 
 <script>
+  function toggleDropdown(e) {
+    e.stopPropagation();
+    document.querySelector('.dropdown').classList.toggle('open');
+  }
+  document.addEventListener('click', function() {
+    document.querySelector('.dropdown').classList.remove('open');
+  });
   function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     var el = document.getElementById('page-' + id);
